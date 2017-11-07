@@ -76,7 +76,7 @@ const isValidDrum = ( drum ) => {
 }
 
 const isValidIndex = ( index ) => {
-  if( index >=1 && index <= 16){
+  if( index >=0 && index <= 15){
     return true;
   } else{
     return false;
