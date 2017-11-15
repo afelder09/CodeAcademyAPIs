@@ -266,12 +266,16 @@ function createComment(url, request) {
       body: requestComment.body,
       username: requestComment.username,
       articleId: requestComment.articleId,
-      upvotedBy: 0,
-      downvotedBy: 0
+      upvotedBy: [],
+      downvotedBy: []
     };
 
     database.comments[comment.id] = comment;
+    //Add comment id to user
     database.users[comment.username].commentIds.push(comment.id);
+
+    //Add comment id to article
+    database.articles[comment.articleId].commentIds.push(comment.id);
 
     response.body = {comment: comment};
     response.status = 201;
@@ -283,19 +287,18 @@ function createComment(url, request) {
 }
 
 function updateComment(url, request) {
-  // console.log('Comment request is: ', request);
-  const savedComment = database.comments[request.body.comment.id];
-  // console.log('Saved Comment: ', savedComment)
+  const id = Number(url.split('/').filter(segment => segment)[1]);
+  const savedComment = database.comments[id];
   const requestComment = request.body && request.body.comment;
   const response = {};
 
   if (!id || !requestComment) {
     response.status = 400;
-  } else if (!savedArticle) {
+  } else if (!savedComment) {
     response.status = 404;
   } else {
     savedComment.body = requestComment.body || savedComment.body;
-    savedComment.username = requestComment.username || savedComment.username;
+    // savedComment.username = requestComment.username || savedComment.username;
 
     response.body = {comment: savedComment};
     response.status = 200;
@@ -310,12 +313,24 @@ function deleteComment(url, request) {
   const response = {};
 
   if (savedComment) {
+    //console.log('In the saved comments block')
+    //Delete comment
     database.comments[id] = null;
+    //Delete comment id on user object
     const userCommentIds = database.users[savedComment.username].commentIds;
-    userArticleIds.splice(userArticleIds.indexOf(id), 1);
+    userCommentIds.splice(userCommentIds.indexOf(id), 1);
+    //Delete comment id on articles Object
+    // database.articles.forEach(article => {
+    //   article.commentIds.forEach(commentId => {
+    //     if(commentId==id){
+    //       article.commentIds.splice(commentIds.indexOf(id),1)
+    //     }
+    //   })
+    // })
+
     response.status = 204;
   } else {
-    response.status = 400;
+    response.status = 404;
   }
 
   return response;
