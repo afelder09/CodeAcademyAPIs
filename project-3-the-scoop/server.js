@@ -316,17 +316,14 @@ function deleteComment(url, request) {
     //console.log('In the saved comments block')
     //Delete comment
     database.comments[id] = null;
+
     //Delete comment id on user object
     const userCommentIds = database.users[savedComment.username].commentIds;
     userCommentIds.splice(userCommentIds.indexOf(id), 1);
+
     //Delete comment id on articles Object
-    // database.articles.forEach(article => {
-    //   article.commentIds.forEach(commentId => {
-    //     if(commentId==id){
-    //       article.commentIds.splice(commentIds.indexOf(id),1)
-    //     }
-    //   })
-    // })
+    const articleCommentIds = database.articles[savedComment.articleId].commentIds;
+    articleCommentIds.splice(articleCommentIds.indexOf(id), 1);
 
     response.status = 204;
   } else {
@@ -371,6 +368,15 @@ function downvoteComment(url, request) {
 
   return response;
 }
+
+function loadDatabase(){
+  
+}
+
+function saveDatabase(){
+
+}
+
 
 // Write all code above this line.
 
