@@ -369,12 +369,25 @@ function downvoteComment(url, request) {
   return response;
 }
 
+const yml = require('js-yaml');
+const fs = require('fs');
+
 function loadDatabase(){
-  
+  return yml.safeLoad(fs.readFileSync('./serverConfig.yml', 'utf8'));
 }
 
 function saveDatabase(){
-
+  const ymlFile = yml.safeDump( database, {
+    'styles': {
+      '!!null': 'canonical'
+    },
+    'sortKeys': true
+  })
+  fs.writesFile("./serverConfig.yml", ymlFile, function(err) {
+    if(err) {
+      return console.log(err);
+    }
+  })
 }
 
 
